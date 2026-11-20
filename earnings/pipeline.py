@@ -483,7 +483,8 @@ def run(day: str, out_dir: str = "outputs", limit: int | None = None,
     pd.DataFrame(vals).to_csv(out / "valuations.csv", index=False)
     meta = {"as_of": str(as_of), "n_announcements": len(anns), "n_announcements_all": n_all, "train_end_quarter": str(ctx.train_end),
             "panel_rows": int(len(ctx.panel)), "macro": ctx.macro,
-            "sources": ["SEC EDGAR XBRL companyfacts/frames/submissions, 8-K Item 2.02",
+            "sources": ["Nasdaq/Zacks earnings calendar (announcement dates) and analyst estimates",
+                        "SEC EDGAR XBRL companyfacts/frames/submissions, 8-K Item 2.02 text",
                         "U.S. Treasury par yield curve", "Philadelphia Fed RTDSM (ROUTPUT, P)",
                         "Damodaran implied ERP", "Kenneth French FF48 SIC definitions",
                         "Nasdaq public quote API (daily close)"]}

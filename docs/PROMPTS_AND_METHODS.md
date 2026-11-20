@@ -25,12 +25,19 @@ The researcher typed these instructions into the agent's prompt window. Spelling
 | 13 | no need to do for all firms, how many firms announce earnings for firms in russell 3000 firms? |
 | 14 | let's narrow down the sample to reduce workload and token. I want to test only for firms with analyst following. check yahoo finance or IBES and only when there is analyst at least one folllowing the firm, analyze those firms. |
 | 15 | i have wrds access |
+| 16 | should not use 8k filing because it can be later than actual earnings announcement date |
+| 17 | I need to get today's earnings announcement dates for US firms |
+| 18 | can you not ask me to approve and allow? |
 
 **Design decisions taken by the agent in response, so they can be reported:**
 - **Universe.** The official Russell 3000 list is proprietary, and iShares blocks automated downloads of its IWV holdings. The sample therefore uses a Russell 3000 *proxy*: the 3,000 largest U.S. SEC filers by public float as reported on the 10-K cover page (XBRL `dei:EntityPublicFloat`). Royalty trusts, ETFs and funds are excluded. XBRL scale errors are corrected when float exceeds 300× book equity.
 - **Analyst following.** Coverage is taken from Nasdaq's public analyst API (estimates by Zacks), keeping firms with at least one estimate. Yahoo Finance has no official API. I/B/E/S via WRDS needs a PostgreSQL connection with two-factor authentication, which an unattended cloud run cannot provide. A WRDS (I/B/E/S) export can replace the Nasdaq source when supplied.
 - **Cutoff.** The run uses 23:59 ET. EDGAR stops accepting filings at 22:00 ET, so every same-day announcement is included.
-- **Sample on 2026-11-19.** 37 firms filed 8-K Item 2.02 earnings releases. 19 were in the Russell 3000 proxy, and 18 of those had at least one analyst estimate.
+- **Announcement dates.** In response to prompt 16, announcement dates are taken from the earnings calendar (Nasdaq; data by Zacks), which gives the press-release date. An Item 2.02 8-K may be filed up to four business days after the release. The 8-K is used only as the source of press-release text, and only when it was accepted before the cutoff. Otherwise no preliminary EPS is used for that quarter.
+- **Sample on 2026-11-19.**
+  - Final (calendar dates): 78 announcements → 23 in the Russell 3000 proxy → 20 with at least one analyst estimate.
+  - The earlier 8-K-based selection found only 37 → 19 → 18. It missed Matthews International and Blaize, among others.
+- **Schedule.** A scheduled task runs `scripts/nightly.sh` every weekday at 23:59 ET; it does nothing on NYSE holidays. It restores the saved analysis state from the `analysis-state` branch, runs the pipeline, pushes the updated state, and uploads the outputs to Dropbox `/__AI_Predicted_earnings/<date>/`.
 
 ---
 
