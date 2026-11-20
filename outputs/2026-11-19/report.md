@@ -19,7 +19,7 @@ Panel training data through calendar quarter: 2026Q3
 | ROST | ROSS STORES, INC. | 42 | 2.66 | no | 8.50 | 7.93 | 6.84 | 7.76 | 219.88 | 70.29 | 0.32 |
 | WSM | WILLIAMS SONOMA INC | 42 | 2.38 | yes | 9.68 | 8.15 | 7.52 | 8.45 | 220.66 | 59.12 | 0.27 |
 | MMS | MAXIMUS, INC. | 34 | 1.82 | no | 7.01 | 5.52 | 5.79 | 6.11 | 62.00 | 87.94 | 1.42 |
-| UGI | UGI CORP /PA/ | 31 | 0.04 | yes | 1.85 | 1.81 | 1.37 | 1.68 | 35.10 | 23.66 | 0.67 |
+| UGI | UGI CORP /PA/ | 31 | 0.04 | no | 2.84 | 2.53 | 2.08 | 2.48 | 35.10 | 30.80 | 0.88 |
 | ROAD | Construction Partners, Inc. | 18 | 1.00 | yes | 2.58 | 2.75 | 1.81 | 2.38 | 72.24 | 36.56 | 0.51 |
 | BBWI | Bath & Body Works, Inc. | 42 | 0.19 | no | 3.38 |  |  | 3.38 | 18.91 |  |  |
 | VVV | VALVOLINE INC | 30 | 0.07 | no | 1.16 | 0.36 | 0.26 | 0.59 | 36.84 | 5.64 | 0.15 |
