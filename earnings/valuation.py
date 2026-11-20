@@ -47,6 +47,18 @@ def _clip(x, lo, hi):
     return float(min(max(x, lo), hi))
 
 
+def _book_growth(roe: float, v: "ValuationInputs") -> float:
+    """Clean-surplus book growth, capped at long-run growth (steady state).
+
+    Retaining (1 - payout) of a high ROE would compound book value faster than
+    the discount rate and make the sum explode; in steady state a firm cannot
+    reinvest at above-normal rates forever, so earnings beyond what sustains
+    growth at g_long are treated as paid out (Penman 2013, ch. 6).
+    """
+    g_cap = min(max(v.g_long, 0.0), v.r - 0.01)
+    return min(roe * (1 - v.payout), g_cap)
+
+
 def rim_gls(v: ValuationInputs, fade_years: int = 12) -> float:
     b, value = v.bvps0, v.bvps0
     if b <= 0:
@@ -54,9 +66,8 @@ def rim_gls(v: ValuationInputs, fade_years: int = 12) -> float:
     roe1 = v.eps_fy1 / b
     for t in range(1, fade_years + 1):
         roe = roe1 if t <= 2 else roe1 + (v.roe_target - roe1) * (t - 2) / (fade_years - 2)
-        e = roe * b
         value += (roe - v.r) * b / (1 + v.r) ** t
-        b += e * (1 - v.payout)
+        b *= 1 + _book_growth(roe, v)
     value += (roe - v.r) * b / (v.r * (1 + v.r) ** fade_years)
     return float(value)
 
@@ -90,7 +101,7 @@ def ep_rim(v: ValuationInputs, years: int = 30) -> float:
     for t in range(1, years + 1):
         roe = v.roe_target + omega ** (t - 1) * (roe1 - v.roe_target)
         value += (roe - v.r) * b / (1 + v.r) ** t
-        b += roe * b * (1 - v.payout)
+        b *= 1 + _book_growth(roe, v)
     value += (roe - v.r) * b / (v.r * (1 + v.r) ** years)
     return float(value)
 

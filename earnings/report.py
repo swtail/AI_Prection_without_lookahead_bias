@@ -42,6 +42,12 @@ def write_report(run_dir: Path) -> Path:
     if len(skipped):
         lines += ["", "## Not forecast", ""]
         lines += [f"- {r.get('name')} (CIK {r.get('cik')}): {r.get('status')}" for _, r in skipped.iterrows()]
+    lines += ["", "## Notes", "",
+              "- Values for firms with negative book equity are not computed (ROE-based models undefined).",
+              "- Residual income book growth is capped at long-run growth (steady-state payout).",
+              "- 5-year-window panel models (especially the country model) are estimated on a short, "
+              "post-2020 sample and can extrapolate macro effects; compare with the 10-year window and "
+              "analyst consensus in firm_summary.csv."]
     lines += ["", "## Sources", ""] + [f"- {x}" for x in meta["sources"]]
     lines += ["", "Files: `firm_summary.csv` (all variables), `eps_forecasts.csv` (by information set, "
               "window and horizon), `valuations.csv` (RIM, DCF, EP-RIM, composite, V/P), `run_meta.json`, "
