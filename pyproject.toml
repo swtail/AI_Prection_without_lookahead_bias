@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nolookahead"
+version = "0.1.0"
+description = "Point-in-time data, walk-forward backtesting and leakage audits for ML forecasts without lookahead bias"
+requires-python = ">=3.10"
+dependencies = ["numpy>=1.24", "pandas>=2.0"]
+
+[project.optional-dependencies]
+dev = ["pytest>=7", "scikit-learn>=1.3"]
+
+[tool.setuptools]
+packages = ["nolookahead"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
