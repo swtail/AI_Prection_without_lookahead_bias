@@ -219,9 +219,12 @@ def peers_by_sic(sic: int, max_pages: int = 10) -> list[int]:
 class Announcement:
     cik: int
     name: str
-    accession: str
-    accepted: pd.Timestamp
-    index_url: str
+    accession: str | None          # 8-K Item 2.02 accepted by the cutoff, if any
+    accepted: pd.Timestamp          # announcement time (calendar) or 8-K acceptance time
+    index_url: str | None
+    source: str = "8-K"             # "calendar" when the date comes from the earnings calendar
+    ticker: str | None = None
+    calendar: dict | None = None    # raw earnings-calendar row (timing, street EPS, forecast)
 
 
 def announcements_on(day: date) -> list[Announcement]:
@@ -313,6 +316,8 @@ def press_release_numbers(ann: Announcement) -> ReleaseNumbers:
     Press releases are unstructured; the value is flagged *preliminary* and is
     replaced by the XBRL 10-Q/10-K value once that is filed.
     """
+    if not ann.index_url:
+        return ReleaseNumbers(None, None, "", None)
     idx = get(ann.index_url, max_age=None).decode("latin-1")
     ex = None
     for row in re.findall(r"<tr.*?</tr>", idx, re.S):

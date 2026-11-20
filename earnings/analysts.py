@@ -55,3 +55,15 @@ def _f(x):
         return float(str(x).replace("$", "").replace(",", ""))
     except (TypeError, ValueError):
         return None
+
+
+def earnings_calendar(day) -> list[dict]:
+    """Firms reporting earnings on ``day`` (Nasdaq earnings calendar; data by Zacks).
+
+    The press release date, not the 8-K filing date: firms may file the Item 2.02
+    8-K up to four business days after the release. ``time`` is
+    time-pre-market / time-after-hours / time-not-supplied.
+    """
+    d = pd.Timestamp(day).date()
+    data = get_json(f"https://api.nasdaq.com/api/calendar/earnings?date={d}", max_age=3600).get("data") or {}
+    return data.get("rows") or []

@@ -175,6 +175,12 @@ def run_firm(ctx: Context, ann: sec.Announcement) -> dict:
     rec: dict = {
         "as_of": str(ctx.as_of), "cik": ann.cik, "ticker": prof.ticker, "name": prof.name,
         "accession": ann.accession, "announced_at": str(ann.accepted),
+        "announcement_source": ann.source,
+        "announcement_time": (ann.calendar or {}).get("time"),
+        "eps_street_actual_zacks": (ann.calendar or {}).get("eps"),
+        "eps_street_forecast_zacks": (ann.calendar or {}).get("epsForecast"),
+        "eps_surprise_pct_zacks": (ann.calendar or {}).get("surprise"),
+        "fiscal_quarter_ending_calendar": (ann.calendar or {}).get("fiscalQuarterEnding"),
         "sic": prof.sic, "ff48": ind_no, "ff48_name": ind_name, "country": prof.country,
         "state": prof.state, "fiscal_year_end": prof.fiscal_year_end,
     }
@@ -372,7 +378,7 @@ def run_spec(ctx: "Context", as_of, n: int) -> dict:
         "ai_agent": {"tool": os.environ.get("EARNINGS_AI_TOOL", "unspecified"),
                      "model": os.environ.get("EARNINGS_AI_MODEL", "unspecified"),
                      "effort": os.environ.get("EARNINGS_AI_EFFORT", "unspecified")},
-        "announcement_rule": f"SEC 8-K with Item 2.02 accepted on the run date at or before {CUTOFF} US/Eastern",
+        "announcement_rule": f"firms on the Nasdaq/Zacks earnings calendar for the run date (press-release date), plus any 8-K Item 2.02 accepted by {CUTOFF} US/Eastern; 8-K text used only if accepted by the cutoff",
         "sample_filter": "Russell 3000 proxy (top 3,000 US filers by 10-K public float) and >=1 analyst estimate (Nasdaq/Zacks)",
         "estimation_windows_years": list(WINDOWS),
         "horizons_quarters": list(F.HORIZONS),
@@ -393,11 +399,43 @@ def run_spec(ctx: "Context", as_of, n: int) -> dict:
     }
 
 
+_TIME = {"time-pre-market": "08:00", "time-after-hours": "16:30"}
+
+
+def announcements(day: str, as_of: pd.Timestamp) -> list[sec.Announcement]:
+    """Earnings announcements on ``day``.
+
+    The announcement date comes from the earnings calendar (the press-release
+    date), because the Item 2.02 8-K can be filed up to four business days later.
+    An 8-K accepted by the cutoff, if any, is attached only as the source of the
+    press-release text. 8-K filers missing from the calendar are kept as well.
+    """
+    from .analysts import earnings_calendar
+    tickers = sec.ticker_map()
+    by_ticker = {str(t).upper(): int(c) for t, c in zip(tickers["ticker"], tickers["cik"])}
+    eightk = {a.cik: a for a in sec.announcements_on(pd.Timestamp(day).date()) if a.accepted <= as_of}
+    out, seen = [], set()
+    for row in earnings_calendar(day):
+        tic = str(row.get("symbol", "")).upper()
+        cik = by_ticker.get(tic) or by_ticker.get(tic.replace(".", "-"))
+        if cik is None or cik in seen:
+            continue
+        seen.add(cik)
+        when = pd.Timestamp(f"{day} {_TIME.get(row.get('time'), '12:00')}", tz="America/New_York")
+        k = eightk.get(cik)
+        out.append(sec.Announcement(cik, row.get("name", ""), k.accession if k else None, when,
+                                    k.index_url if k else None, "calendar", tic, row))
+    for cik, k in eightk.items():
+        if cik not in seen:
+            k.source = "8-K only"
+            out.append(k)
+    return out
+
+
 def run(day: str, out_dir: str = "outputs", limit: int | None = None,
         state_dir: str | None = "state") -> Path:
     as_of = pd.Timestamp(f"{day} {CUTOFF}", tz="America/New_York")
-    anns = [a for a in sec.announcements_on(pd.Timestamp(day).date())
-            if a.accepted <= as_of]
+    anns = announcements(day, as_of)
     n_all = len(anns)
     from .analysts import coverage
     from .universe import russell3000_proxy
