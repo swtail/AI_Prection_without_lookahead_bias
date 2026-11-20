@@ -190,8 +190,15 @@ def run_firm(ctx: Context, ann: sec.Announcement) -> dict:
                 "release_url": rel.exhibit_url})
     new_end = rel.period_end or (eps.index[-1] + pd.DateOffset(months=3))
     used_release = False
-    if rel.eps_diluted is not None and new_end > eps.index[-1] + pd.Timedelta(days=45) \
-            and _plausible(rel.eps_diluted, eps):
+    # If the latest XBRL quarter was filed around the announcement (10-Q/10-K filed with or
+    # just before the release), the release describes that quarter: do not append it again.
+    last_filed = store.first_available("eps").get(eps.index[-1])
+    ann_day = pd.Timestamp(ann.accepted).tz_localize(None).normalize() if pd.Timestamp(ann.accepted).tzinfo \
+        else pd.Timestamp(ann.accepted).normalize()
+    already_in_xbrl = last_filed is not None and abs((ann_day - pd.Timestamp(last_filed)).days) <= 7
+    rec["release_quarter_already_in_xbrl"] = bool(already_in_xbrl)
+    if rel.eps_diluted is not None and not already_in_xbrl \
+            and new_end > eps.index[-1] + pd.Timedelta(days=45) and _plausible(rel.eps_diluted, eps):
         eps = pd.concat([eps, pd.Series([rel.eps_diluted], index=[pd.Timestamp(new_end)])])
         used_release = True
     rec["release_eps_used"] = used_release
