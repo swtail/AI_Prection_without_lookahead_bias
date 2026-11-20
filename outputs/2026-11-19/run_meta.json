@@ -1,0 +1,28 @@
+{
+  "as_of": "2026-11-19 23:59:00-05:00",
+  "n_announcements": 18,
+  "n_announcements_all": 37,
+  "train_end_quarter": "2026Q3",
+  "panel_rows": 322397,
+  "macro": {
+    "real_gdp_growth_yoy": 0.020656907062580387,
+    "real_gdp_growth_qoq_ann": 0.03370191697426517,
+    "real_gdp_growth_10y": 0.025150741097662577,
+    "gdp_last_quarter": "2026-09-30",
+    "inflation_yoy": 0.03733599301061563,
+    "inflation_10y": 0.03152021759996737,
+    "rf_10y": 0.0504,
+    "rf_3m": 0.0434,
+    "term_spread": 0.006999999999999999,
+    "erp": 0.0423,
+    "nominal_growth_lr": 0.05746371552982876
+  },
+  "sources": [
+    "SEC EDGAR XBRL companyfacts/frames/submissions, 8-K Item 2.02",
+    "U.S. Treasury par yield curve",
+    "Philadelphia Fed RTDSM (ROUTPUT, P)",
+    "Damodaran implied ERP",
+    "Kenneth French FF48 SIC definitions",
+    "Nasdaq public quote API (daily close)"
+  ]
+}

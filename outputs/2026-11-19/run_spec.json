@@ -1,0 +1,66 @@
+{
+  "as_of": "2026-11-19 23:59:00-05:00",
+  "run_started_utc": "2026-11-20 09:54:00.120773+00:00",
+  "code_commit": "bd32a118db3eaa8cfe4d2c632cf7b4f131ab867b",
+  "python": "3.13.18",
+  "ai_agent": {
+    "tool": "Claude Code",
+    "model": "claude-opus-5-5",
+    "effort": "medium"
+  },
+  "announcement_rule": "SEC 8-K with Item 2.02 accepted on the run date at or before 23:59 US/Eastern",
+  "sample_filter": "Russell 3000 proxy (top 3,000 US filers by 10-K public float) and >=1 analyst estimate (Nasdaq/Zacks)",
+  "estimation_windows_years": [
+    5,
+    10
+  ],
+  "horizons_quarters": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "information_sets": {
+    "firm": "seasonal random walk, SRW with drift, Brown-Rozeff SARIMA(1,0,0)(0,1,1)4; equal weights",
+    "industry": "pooled OLS of ROE_t+k on roe, roe_seas, loss, loss_x_roe, ind_med, ind_seas over FF48 peers",
+    "country": "industry model plus cty_med, cty_chg, gdp_yoy, term_spread, rf_10y",
+    "all": "equal-weight average of firm, industry and country EPS forecasts"
+  },
+  "valuation": {
+    "models": [
+      "RIM (GLS 2001, 12-year fade)",
+      "DCF FCFE (5-year fade, Gordon)",
+      "EP-RIM (estimated AR(1) ROE persistence, 30 years)"
+    ],
+    "composite": "median of the three",
+    "cost_of_equity": "10y Treasury + Blume beta (60 monthly returns vs SPY) x Damodaran implied ERP"
+  },
+  "train_end_quarter": "2026Q3",
+  "state_reuse": [
+    "panel: reused 2014Q3..2026Q1 from state, refreshed 2026Q2..2026Q3",
+    "macro_by_quarter: reused 49, computed 0",
+    "FF48 10 peers: reused (362)",
+    "FF48 2 peers: reused (626)",
+    "FF48 42 peers: reused (2164)",
+    "FF48 36 peers: reused (1325)",
+    "FF48 37 peers: reused (479)",
+    "FF48 34 peers: reused (3752)",
+    "FF48 31 peers: reused (894)",
+    "FF48 18 peers: reused (561)",
+    "FF48 30 peers: reused (1124)"
+  ],
+  "n_announcements": 18,
+  "macro": {
+    "real_gdp_growth_yoy": 0.020656907062580387,
+    "real_gdp_growth_qoq_ann": 0.03370191697426517,
+    "real_gdp_growth_10y": 0.025150741097662577,
+    "gdp_last_quarter": "2026-09-30",
+    "inflation_yoy": 0.03733599301061563,
+    "inflation_10y": 0.03152021759996737,
+    "rf_10y": 0.0504,
+    "rf_3m": 0.0434,
+    "term_spread": 0.006999999999999999,
+    "erp": 0.0423,
+    "nominal_growth_lr": 0.05746371552982876
+  }
+}
