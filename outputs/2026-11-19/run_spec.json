@@ -1,14 +1,14 @@
 {
   "as_of": "2026-11-19 23:59:00-05:00",
-  "run_started_utc": "2026-11-20 09:56:33.917726+00:00",
-  "code_commit": "bd32a118db3eaa8cfe4d2c632cf7b4f131ab867b",
+  "run_started_utc": "2026-11-20 10:32:52.668820+00:00",
+  "code_commit": "0799ebe2c295211f9bfddb6deb19596f1ee2050c",
   "python": "3.13.18",
   "ai_agent": {
     "tool": "Claude Code",
     "model": "claude-opus-5-5",
     "effort": "medium"
   },
-  "announcement_rule": "SEC 8-K with Item 2.02 accepted on the run date at or before 23:59 US/Eastern",
+  "announcement_rule": "firms on the Nasdaq/Zacks earnings calendar for the run date (press-release date), plus any 8-K Item 2.02 accepted by 23:59 US/Eastern; 8-K text used only if accepted by the cutoff",
   "sample_filter": "Russell 3000 proxy (top 3,000 US filers by 10-K public float) and >=1 analyst estimate (Nasdaq/Zacks)",
   "estimation_windows_years": [
     5,
@@ -39,17 +39,18 @@
   "state_reuse": [
     "panel: reused 2014Q3..2026Q1 from state, refreshed 2026Q2..2026Q3",
     "macro_by_quarter: reused 49, computed 0",
-    "FF48 10 peers: reused (362)",
-    "FF48 2 peers: reused (626)",
     "FF48 42 peers: reused (2164)",
-    "FF48 36 peers: reused (1325)",
-    "FF48 37 peers: reused (479)",
     "FF48 34 peers: reused (3752)",
-    "FF48 31 peers: reused (894)",
+    "FF48 37 peers: reused (479)",
+    "FF48 36 peers: reused (1325)",
     "FF48 18 peers: reused (561)",
-    "FF48 30 peers: reused (1124)"
+    "FF48 30 peers: reused (1124)",
+    "FF48 2 peers: reused (626)",
+    "FF48 19 peers: fetched (394)",
+    "FF48 10 peers: reused (362)",
+    "FF48 31 peers: reused (894)"
   ],
-  "n_announcements": 18,
+  "n_announcements": 20,
   "macro": {
     "real_gdp_growth_yoy": 0.020656907062580387,
     "real_gdp_growth_qoq_ann": 0.03370191697426517,
