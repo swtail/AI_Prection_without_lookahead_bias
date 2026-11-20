@@ -68,3 +68,29 @@ The naive backtest looks like a money machine. The honest one shows the signal w
 ```bash
 python -m pytest -q
 ```
+
+---
+
+# `earnings`: daily earnings forecasts and valuations
+
+The `earnings` package uses `nolookahead` to forecast EPS 1–4 quarters ahead, plus the 4-quarter total, and to estimate per-share value for firms that announced earnings that day. It uses only public data and only what was known at the run's cutoff (23:59 ET).
+
+```bash
+pip install -e ".[earnings]"
+```
+
+```bash
+export EARNINGS_USER_AGENT="YourLab research contact@yourlab.org"   # SEC requires a contact
+```
+
+```bash
+python -m earnings.pipeline --date 2026-11-19 --out outputs --state state
+```
+
+- **Sample:** firms with an 8-K Item 2.02 that day, in the Russell 3000 proxy, with at least one analyst estimate.
+- **Forecasts:** three information sets (firm; firm + industry; firm + industry + country) × 5- and 10-year windows × horizons 1–4.
+- **Valuation:** residual income (RIM), discounted cash flow (DCF), and the Empirical-Persistence RIM (EP-RIM), under firm / industry / country / all parameter sets. Each value is compared with the stock price (V/P).
+- **Outputs** in `outputs/<date>/`: `firm_summary.csv`, `eps_forecasts.csv`, `valuations.csv`, `report.md`, `run_meta.json`, `run_spec.json`.
+- **State** in `state/`: the panel, macro data, industry, country and firm histories. It is reused on later runs.
+
+Methods, sources, references and the prompt record are in [`docs/PROMPTS_AND_METHODS.md`](docs/PROMPTS_AND_METHODS.md).
